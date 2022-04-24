@@ -42,12 +42,3 @@ extern "C" LEAN_EXPORT lean_obj_res eigenlean_ldlt_solve(size_t n, size_t m, b_l
   
   return eigenlean_array_to_matrix(result, n, m, nullptr);
 }
-
-
-extern "C" LEAN_EXPORT lean_object * make_empty(size_t n){
-  lean_object * res = lean_mk_empty_float_array(lean_box(n));
-  for(int i=0;i<n;i++){
-    res = lean_float_array_push(res, 0);
-  }
-  return res;
-}

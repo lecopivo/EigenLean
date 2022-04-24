@@ -1,25 +1,7 @@
 import Lake
 open System Lake DSL
 
-
--- def CMakeTarget (pkgDir : FilePath) : FileTarget :=
---   let makeFile := pkgDir / "cpp" / "build" / "asdf"
---   -- TODO: glob all files in "cpp" direcotry"
---   let srcTarget := inputFileTarget <| System.FilePath.mk "cpp" / "CMakeLists.txt"
---   fileTargetWithDep makeFile srcTarget λ srcFile => do
---     let asdf ← IO.Process.spawn {
---       cmd := "cmake"
---       args := #["../../cpp",
---                 "-DCMAKE_EXPORT_COMPILE_COMMANDS=1",
---                 s!"-DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES={(← getLeanIncludeDir).toString}"]
---       cwd := some $ pkgDir / "cpp" / "build" 
---     }
---     let out ← asdf.wait
---     -- IO.println $ (← asdf.stdout)
---     IO.println ""
-
 package EigenLean (pkgDir) (args) {
-  -- defaultFacet := PackageFacet.sharedLib
   moreLinkArgs := #["-L", defaultBuildDir / "cpp" |>.toString, "-lEigenLean"]
 }
 
