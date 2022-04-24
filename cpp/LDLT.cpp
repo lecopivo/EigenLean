@@ -13,11 +13,8 @@ extern "C" double * eigenlean_get_matrix_ptr(size_t n, size_t m, b_lean_obj_arg 
 }
 
 Eigen::Map<Eigen::MatrixXd> to_eigenMatrix(lean_object * matrix, size_t n, size_t m){
-  return Eigen::Map<Eigen::MatrixXd>(eigenlean_get_matrix_ptr(n, m, matrix),
-                       n,
-	               m);  
+  return Eigen::Map<Eigen::MatrixXd>(eigenlean_get_matrix_ptr(n, m, matrix), n, m);  
 }
-
 
 extern "C" LEAN_EXPORT lean_obj_res eigenlean_ldlt(size_t n, b_lean_obj_arg matrix){
 

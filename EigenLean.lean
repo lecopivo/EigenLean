@@ -34,9 +34,9 @@ def FloatArray.toMatrix (array : FloatArray) (n m : USize) (property : array.siz
 --- LDLT ---
 ------------
 
-constant SPointed : NonemptyType
-def LDLT (n : USize) : Type := SPointed.type
-instance {n : USize} : Nonempty (LDLT n) := SPointed.property
+constant LDLT.nonemptytype (n : USize) : NonemptyType
+def LDLT (n : USize) : Type := LDLT.nonemptytype n |>.type
+instance {n : USize} : Nonempty (LDLT n) := LDLT.nonemptytype n |>.property
 
 @[extern "eigenlean_ldlt"]
 constant Matrix.ldlt (A : @& Matrix n n) : LDLT n

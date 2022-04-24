@@ -3,6 +3,6 @@ project(myproject)
  
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
  
-add_library(EigenLean STATIC ldlt.cpp)
+add_library(EigenLean STATIC LDLT.cpp SparseMatrix.cpp)
 target_link_libraries(EigenLean Eigen3::Eigen)
 
