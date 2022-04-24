@@ -1,4 +1,4 @@
-* Eigen ↔ Lean interface
+* Lean 4 interface to Eigen
 
   Proof of concept for interfacing Eigen's linear solvers in Lean 4.
 
