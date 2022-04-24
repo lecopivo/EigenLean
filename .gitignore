@@ -1,0 +1,4 @@
+/build
+/lean_packages
+*~
+cpp/.clangd
