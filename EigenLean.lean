@@ -45,4 +45,4 @@ constant Matrix.ldlt (A : @& Matrix n n) : LDLT n
 constant LDLT.solve {n m} (ldlt : @& LDLT n) (rhs : @& Matrix n m) : Matrix n m
 
 end Eigen
-↔
+
