@@ -58,15 +58,17 @@ script buildExamples (args) do
         cmd := "lake"
         args := #["env", "lean", f.path.toString, "-c", cFile.toString]
       }
+      let out ← makeCCode.wait
 
       let outFile := defaultBuildDir / "examples" / (f.path.withExtension "" |>.fileName.getD "")
-      let makeCCode ← IO.Process.spawn {
+      let build ← IO.Process.spawn {
         cmd := "leanc"
         args := #[cFile |>.toString, 
                   "-o", outFile |>.toString,
                   "-L./build/lib", "-lEigenLean",
                   "-L./build/cpp", "-lEigenLeanCppStatic"]
       }
+      let out ← build.wait
 
   return 0
   

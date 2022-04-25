@@ -6,12 +6,10 @@ constant SparseMatrix.nonemptytype (n m : USize) : NonemptyType
 def SparseMatrix (n m : USize) : Type := SparseMatrix.nonemptytype n m |>.type
 instance {n m : USize} : Nonempty (SparseMatrix n m) := SparseMatrix.nonemptytype n m |>.property
 
-@[reducible]
 structure Idx (n : USize) where
   val : USize
   property : val < n
 
-@[reducible]
 structure Triplet (n m : USize) where
   row : USize
   col : USize
@@ -27,8 +25,6 @@ instance (n m : USize) : Coe (Array (Nat×Nat×Float)) (Array (Triplet n m)) :=
       if h : row.toUSize < n ∧ col.toUSize < m then
         t := t.push ⟨row.toUSize, col.toUSize, val, h.1, h.2⟩
     t⟩
-
-attribute [unbox] Idx Triplet
 
 @[export eigenlean_triplets_get_row]
 def tripletsGetRow (entries : @& Array (Triplet n m)) (i : USize) (p : i.toNat < entries.size) : USize := (entries.uget i p).row
