@@ -1,4 +1,4 @@
-import EigenLean
+import EigenLean.Matrix
 
 namespace Eigen
 
@@ -48,5 +48,7 @@ constant SparseMatrix.mkIdentity (n : USize) : SparseMatrix n n
 
 @[extern "eigenlean_sparse_matrix_to_dense"]
 constant SparseMatrix.toDense (A : @& SparseMatrix n m) : Matrix n m
+
+
 
 end Eigen

@@ -1,5 +1,4 @@
 #include <Eigen/Sparse>
-#include <Eigen/src/Core/util/Meta.h>
 
 #include <lean/lean.h>
 
@@ -87,3 +86,4 @@ extern "C" LEAN_EXPORT lean_obj_res eigenlean_sparse_matrix_to_dense(size_t n, s
   
   return eigenlean_array_to_matrix(result, n, m, nullptr);
 }
+

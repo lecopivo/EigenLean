@@ -2,7 +2,8 @@ import Lake
 open System Lake DSL
 
 package EigenLean (pkgDir) (args) {
-  moreLinkArgs := #["-L", defaultBuildDir / "cpp" |>.toString, "-lEigenLean"]
+  -- defaultFacet := PackageFacet.staticLib
+  moreLinkArgs := #["-L", defaultBuildDir / "cpp" |>.toString, "-lEigenLeanCpp"]
 }
 
 script compileCpp (args) do
@@ -37,7 +38,6 @@ script compileCpp (args) do
   let out ← runMake.wait
   if out != 0 then
     return out 
-
 
   return 0
 
