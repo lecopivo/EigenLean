@@ -2,7 +2,7 @@ import Lake
 open System Lake DSL
 
 package EigenLean (pkgDir) (args) {
-  -- defaultFacet := PackageFacet.staticLib
+  defaultFacet := PackageFacet.staticLib
   moreLinkArgs := #["-L", defaultBuildDir / "cpp" |>.toString, "-lEigenLeanCpp"]
 }
 
@@ -41,6 +41,34 @@ script compileCpp (args) do
 
   return 0
 
+script buildExamples (args) do
+
+  let examplesDir := (← IO.currentDir) / "examples"
+
+  let makeBuildDir ← IO.Process.run {
+    cmd := "mkdir"
+    args := #["-p", "build/examples"]
+  }
+
+  for f in (← examplesDir.readDir) do
+    if f.path.extension.getD "" == "lean" then
+
+      let cFile := defaultBuildDir / "examples" / (f.path.withExtension "c" |>.fileName.getD "")
+      let makeCCode ← IO.Process.spawn {
+        cmd := "lake"
+        args := #["env", "lean", f.path.toString, "-c", cFile.toString]
+      }
+
+      let outFile := defaultBuildDir / "examples" / (f.path.withExtension "" |>.fileName.getD "")
+      let makeCCode ← IO.Process.spawn {
+        cmd := "leanc"
+        args := #[cFile |>.toString, 
+                  "-o", outFile |>.toString,
+                  "-L./build/lib", "-lEigenLean",
+                  "-L./build/cpp", "-lEigenLeanCppStatic"]
+      }
+
+  return 0
   
 
 

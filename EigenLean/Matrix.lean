@@ -11,7 +11,7 @@ structure Matrix (n m : USize) where
   property : data.size = n.toNat * m.toNat
 
 instance {n m : USize} : Inhabited (Matrix n m) := 
-  ⟨FloatArray.mk (Array.mkArray (n.toNat*m.toNat) (0:Float)) ,sorry⟩
+  ⟨FloatArray.mk (Array.mkArray (n.toNat*m.toNat) (0:Float)), sorry⟩
 
 -- TODO: Proper rectangular printing of matrices
 instance {n m : USize} : ToString (Matrix n m) := ⟨λ A => toString A.data⟩
