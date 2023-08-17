@@ -39,3 +39,6 @@ extern "C" LEAN_EXPORT lean_obj_res eigenlean_ldlt_solve(size_t n, size_t m, b_l
   
   return eigenlean_array_to_matrix(result, n, m, nullptr);
 }
+
+
+

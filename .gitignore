@@ -2,3 +2,4 @@
 /lean_packages
 *~
 cpp/.clangd
+/cpp/.cache/

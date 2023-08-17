@@ -1,77 +1,60 @@
 import Lake
 open System Lake DSL
 
-package EigenLean (pkgDir) (args) {
-  defaultFacet := PackageFacet.staticLib
-  moreLinkArgs := #["-L", defaultBuildDir / "cpp" |>.toString, "-lEigenLeanCpp"]
+package EigenLean
+
+@[default_target]
+lean_lib EigenLean {
+  -- precompileModules := true
+  roots := #[`Eigen]
 }
 
-script compileCpp (args) do
 
-  -- make build directory
-  let makeBuildDir ← IO.Process.run {
+lean_exe dense {
+  root := `examples.dense
+}
+
+lean_exe sparse {
+  root := `examples.sparse
+}
+
+
+target runCMake pkg : FilePath := do
+
+  let cmakeLists ← inputFile <| pkg.dir / "cpp" / "CMakeLists.txt" 
+  let cmakeLists ← cmakeLists.await
+  
+  IO.println s!"CMakeLists: {cmakeLists}"
+
+  let _ ← IO.Process.run {
     cmd := "mkdir"
-    args := #["-p", "build/cpp"]
+    args := #["-p", pkg.buildDir / "cpp" |>.toString]
   }
 
-  -- run cmake
-  if ¬(← defaultBuildDir / "cpp" / "Makefile" |>.pathExists) then
-    let runCMake ← IO.Process.spawn {
-      cmd := "cmake"
-      args := #["../../cpp", 
-                "-DCMAKE_EXPORT_COMPILE_COMMANDS=1",
+  proc {
+    cmd := "cmake"
+    args := #[ ".." / ".." / cmakeLists |>.toString,
+              "-DCMAKE_EXPORT_COMPILE_COMMANDS=1",
                 "-DCMAKE_BUILD_TYPE=Release",
-                s!"-DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES={← getLeanIncludeDir}"]
-      cwd := defaultBuildDir / "cpp" |>.toString
-      
-    }
-    let out ← runCMake.wait
-    if out != 0 then
-      return out
+                s!"-DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES={← getLeanIncludeDir}","-B."]
+    cwd := pkg.buildDir / "cpp"
+  }
 
-  -- run make 
-  let runMake ← IO.Process.spawn {
+  return pure (pkg.buildDir / "cpp" )
+
+
+extern_lib libEigenLean (pkg : Package) := do
+  
+  let cppDir ← fetch <| pkg.target `runCMake
+  let cppDir ← cppDir.await
+
+  proc {
     cmd := "make"
     args := #["-j"]
-    cwd := defaultBuildDir / "cpp" |>.toString
-  }
-  let out ← runMake.wait
-  if out != 0 then
-    return out 
-
-  return 0
-
-script buildExamples (args) do
-
-  let examplesDir := (← IO.currentDir) / "examples"
-
-  let makeBuildDir ← IO.Process.run {
-    cmd := "mkdir"
-    args := #["-p", "build/examples"]
+    cwd := cppDir
   }
 
-  for f in (← examplesDir.readDir) do
-    if f.path.extension.getD "" == "lean" then
-
-      let cFile := defaultBuildDir / "examples" / (f.path.withExtension "c" |>.fileName.getD "")
-      let makeCCode ← IO.Process.spawn {
-        cmd := "lake"
-        args := #["env", "lean", f.path.toString, "-c", cFile.toString]
-      }
-      let out ← makeCCode.wait
-
-      let outFile := defaultBuildDir / "examples" / (f.path.withExtension "" |>.fileName.getD "")
-      let build ← IO.Process.spawn {
-        cmd := "leanc"
-        args := #[cFile |>.toString, 
-                  "-o", outFile |>.toString,
-                  "-L./build/lib", "-lEigenLean",
-                  "-L./build/cpp", "-lEigenLeanCppStatic"]
-      }
-      let out ← build.wait
-
-  return 0
+  let libFile := pkg.buildDir / "cpp" / "libEigenLean.a"
   
-
-
+  return pure libFile
 

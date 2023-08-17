@@ -1,8 +1,8 @@
-import EigenLean.Matrix
+import Eigen.Matrix
 
 namespace Eigen
 
-constant SparseMatrix.nonemptytype (n m : USize) : NonemptyType
+opaque SparseMatrix.nonemptytype (n m : USize) : NonemptyType
 def SparseMatrix (n m : USize) : Type := SparseMatrix.nonemptytype n m |>.type
 instance {n m : USize} : Nonempty (SparseMatrix n m) := SparseMatrix.nonemptytype n m |>.property
 
@@ -21,7 +21,7 @@ instance (n m : USize) : Coe (Array (Nat×Nat×Float)) (Array (Triplet n m)) :=
   ⟨λ u => Id.run do
     let mut t : Array (Triplet n m) := Array.mkEmpty u.size
     for i in [0:u.size] do
-      let (row, col, val) := u[i]
+      let (row, col, val) := u[i]!
       if h : row.toUSize < n ∧ col.toUSize < m then
         t := t.push ⟨row.toUSize, col.toUSize, val, h.1, h.2⟩
     t⟩
@@ -34,16 +34,16 @@ def tripletsGetCol (entries : @& Array (Triplet n m)) (i : USize) (p : i.toNat <
 def tripletsGetVal (entries : @& Array (Triplet n m)) (i : USize) (p : i.toNat < entries.size) : Float := (entries.uget i p).val
 
 @[extern "eigenlean_sparse_matrix_mk_from_triplets"]
-constant SparseMatrix.mk (entries : @& Array (Triplet n m)) : SparseMatrix n m
+opaque SparseMatrix.mk (entries : @& Array (Triplet n m)) : SparseMatrix n m
 
 @[extern "eigenlean_sparse_matrix_mk_zero"]
-constant SparseMatrix.mkZero (n m : USize) : SparseMatrix n m
+opaque SparseMatrix.mkZero (n m : USize) : SparseMatrix n m
 
 @[extern "eigenlean_sparse_matrix_mk_identity"]
-constant SparseMatrix.mkIdentity (n : USize) : SparseMatrix n n
+opaque SparseMatrix.mkIdentity (n : USize) : SparseMatrix n n
 
 @[extern "eigenlean_sparse_matrix_to_dense"]
-constant SparseMatrix.toDense (A : @& SparseMatrix n m) : Matrix n m
+opaque SparseMatrix.toDense (A : @& SparseMatrix n m) : Matrix n m
 
 
 

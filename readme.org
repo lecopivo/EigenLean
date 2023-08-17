@@ -4,9 +4,7 @@
 
   To compile and build examples:
   #+begin_src lean
-    lake script run compileCpp
-    lake build
-    lake scropt run buildExamples
+    lake build dense sparse
   #+end_src
 
   Example of solving simple 2x2 system with LDLT:
@@ -18,7 +16,7 @@
       IO.println b
       IO.println (A.ldlt.solve b)
   #+end_src
-  To run the example =./build/exmaples/dense=.
+  To run the example =./build/bin/dense=.
 
   Example of initializing sparse matrix:
   #+begin_src lean
@@ -27,4 +25,4 @@
       let B := SparseMatrix.mk entries
       IO.println B.toDense
   #+end_src
-  To run the example =./build/exmaples/sparse=.
+  To run the example =./build/bin/sparse=.
