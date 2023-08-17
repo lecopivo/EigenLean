@@ -6,10 +6,6 @@ opaque SparseMatrix.nonemptytype (n m : USize) : NonemptyType
 def SparseMatrix (n m : USize) : Type := SparseMatrix.nonemptytype n m |>.type
 instance {n m : USize} : Nonempty (SparseMatrix n m) := SparseMatrix.nonemptytype n m |>.property
 
-structure Idx (n : USize) where
-  val : USize
-  property : val < n
-
 structure Triplet (n m : USize) where
   row : USize
   col : USize
@@ -44,7 +40,6 @@ opaque SparseMatrix.mkIdentity (n : USize) : SparseMatrix n n
 
 @[extern "eigenlean_sparse_matrix_to_dense"]
 opaque SparseMatrix.toDense (A : @& SparseMatrix n m) : Matrix n m
-
 
 
 end Eigen
