@@ -1,9 +1,5 @@
-#include "CppClass.h"
-#include <Eigen/Dense>
-#include <lean/lean.h>
-// #include <iostream>
-
 #include "util.h"
+#include "CppClass.h"
 
 extern "C" LEAN_EXPORT lean_obj_res eigenlean_ldlt(size_t n, b_lean_obj_arg matrix){
 
@@ -11,7 +7,7 @@ extern "C" LEAN_EXPORT lean_obj_res eigenlean_ldlt(size_t n, b_lean_obj_arg matr
 
   auto ldlt = new Eigen::LDLT<Eigen::MatrixXd>{A};
 
-  return CppClass_to_lean(ldlt);
+  return of_cppClass(ldlt);
 }
 
 extern "C" LEAN_EXPORT lean_obj_res eigenlean_ldlt_solve(size_t n, size_t m, b_lean_obj_arg _ldlt, b_lean_obj_arg _rhs){ // b_lean_obj_arg _rhs)

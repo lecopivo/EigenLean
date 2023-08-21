@@ -1,8 +1,7 @@
-#include <Eigen/Sparse>
-
-#include <lean/lean.h>
-
+#include "util.h"
 #include "CppClass.h"
+
+#include <Eigen/Sparse>
 
 extern "C" size_t eigenlean_triplets_get_row(size_t, size_t, lean_object*, size_t, lean_object*);
 extern "C" size_t eigenlean_triplets_get_col(size_t, size_t, lean_object*, size_t, lean_object*);
@@ -54,14 +53,14 @@ extern "C" LEAN_EXPORT lean_obj_res eigenlean_sparse_matrix_mk_from_triplets(siz
 
   A->setFromTriplets(begin, end);
   
-  return CppClass_to_lean(A);
+  return of_cppClass(A);
 }
 
 extern "C" LEAN_EXPORT lean_obj_res eigenlean_sparse_matrix_mk_zero(size_t n , size_t m){
 
   auto A = new Eigen::SparseMatrix<double>{(Eigen::Index)n, (Eigen::Index)m};
   
-  return CppClass_to_lean(A);
+  return of_cppClass(A);
 }
 
 extern "C" LEAN_EXPORT lean_obj_res eigenlean_sparse_matrix_mk_identity(size_t n){
@@ -70,7 +69,7 @@ extern "C" LEAN_EXPORT lean_obj_res eigenlean_sparse_matrix_mk_identity(size_t n
 
   A->setIdentity();
   
-  return CppClass_to_lean(A);
+  return of_cppClass(A);
 }
 
 extern "C" LEAN_EXPORT lean_obj_res eigenlean_sparse_matrix_to_dense(size_t n, size_t m, b_lean_obj_arg _A){
@@ -85,5 +84,35 @@ extern "C" LEAN_EXPORT lean_obj_res eigenlean_sparse_matrix_to_dense(size_t n, s
   denseA = *A;
   
   return eigenlean_array_to_matrix(result, n, m, nullptr);
+}
+
+
+extern "C" LEAN_EXPORT lean_obj_res eigenlean_sparse_matrix_mk_exclusive(lean_obj_res objA){
+
+  if (lean_is_exclusive(objA)){
+    return objA;
+  } else {
+    auto const& A = *to_cppClass<Eigen::SparseMatrix<double>>(objA);
+    auto copyA = new Eigen::SparseMatrix<double>{A};
+    return of_cppClass(copyA);
+  }
+}
+
+extern "C" LEAN_EXPORT uint8_t eigenlean_sparse_matrix_is_compressed(size_t n, size_t m, b_lean_obj_res objA){
+
+  auto const& A = *to_cppClass<Eigen::SparseMatrix<double>>(objA);
+
+  return A.isCompressed();
+}
+
+extern "C" LEAN_EXPORT lean_obj_res eigenlean_sparse_matrix_make_compressed(size_t n, size_t m, lean_obj_arg objA){
+
+    lean_obj_arg uniqueA = cppClass_make_exclusive<Eigen::SparseMatrix<double>>(objA); // eigenlean_sparse_matrix_mk_exclusive(objA);
+
+  auto& A = *to_cppClass<Eigen::SparseMatrix<double>>(uniqueA);
+
+  A.makeCompressed();
+  
+  return uniqueA;
 }
 

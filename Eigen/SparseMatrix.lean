@@ -41,5 +41,11 @@ opaque SparseMatrix.mkIdentity (n : USize) : SparseMatrix n n
 @[extern "eigenlean_sparse_matrix_to_dense"]
 opaque SparseMatrix.toDense (A : @& SparseMatrix n m) : Matrix n m
 
+@[extern "eigenlean_sparse_matrix_is_compressed"]
+opaque SparseMatrix.isCompressed (A : @& SparseMatrix n m) : Bool
+
+@[extern "eigenlean_sparse_matrix_make_compressed"]
+opaque SparseMatrix.mkCompressed (A : @& SparseMatrix n m) : SparseMatrix n m
+
 
 end Eigen
