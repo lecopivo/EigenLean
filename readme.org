@@ -4,6 +4,7 @@
 
   To compile and build examples:
   #+begin_src lean
+    lake run buildEigen
     lake build dense sparse
   #+end_src
 

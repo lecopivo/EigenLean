@@ -1,5 +1,6 @@
 #include "util.h"
 #include "CppClass.h"
+#include <Eigen/src/Core/util/Constants.h>
 #include <lean/lean.h>
 
 
@@ -172,3 +173,52 @@ extern "C" LEAN_EXPORT lean_obj_res eigenlean_ldlt_solve(size_t n, size_t m, b_l
   
   return eigenlean_array_to_matrix(result, n, m, nullptr);
 }
+
+
+
+
+// JacobiSVD
+
+// C bindings for `Matrix.jacobiSVD`
+extern "C" LEAN_EXPORT lean_obj_res eigenlean_jacobi_svd(size_t n, size_t m, b_lean_obj_arg matrix){
+
+  auto const& A = to_eigenMatrix(matrix, n, m);
+
+  auto svd = new Eigen::JacobiSVD<Eigen::MatrixXd>{A, Eigen::ComputeFullU | Eigen::ComputeFullV};
+
+  return of_cppClass(svd);
+}
+
+
+// C bindings for `JacobiSVD.singularValues`
+extern "C" LEAN_EXPORT lean_obj_res eigenlean_jacobi_svd_singular_values(size_t n, size_t m, b_lean_obj_arg _svd){
+
+  auto const& svd = *to_cppClass<Eigen::JacobiSVD<Eigen::MatrixXd>>(_svd);
+
+  auto const& singularValues = svd.singularValues();
+
+  lean_object * result = lean_alloc_sarray(sizeof(double), singularValues.size(), singularValues.size());
+
+  std::copy(singularValues.data(), singularValues.data() + singularValues.size(), lean_float_array_cptr(result));
+
+  return result;
+}
+
+// C bindings for `JacobiSDF.matrixU`
+extern "C" LEAN_EXPORT lean_obj_res eigenlean_jacobi_svd_matrix_u(size_t n, size_t m, b_lean_obj_arg _svd){
+
+  auto const& svd = *to_cppClass<Eigen::JacobiSVD<Eigen::MatrixXd>>(_svd);
+
+  svd.computeU();
+  auto const& U = svd.matrixU();
+
+  lean_object * result = lean_alloc_sarray(sizeof(double), U.rows()*U.cols(), U.rows()*U.cols());
+
+  std::copy(U.data(), U.data() + U.rows()*U.cols(), lean_float_array_cptr(result));
+
+  return eigenlean_array_to_matrix(result, U.rows(), U.cols(), nullptr);
+}
+
+
+
+

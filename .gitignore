@@ -3,3 +3,4 @@
 *~
 cpp/.clangd
 /cpp/.cache/
+/.lake/
