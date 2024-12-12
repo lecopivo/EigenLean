@@ -34,6 +34,36 @@ def Matrix.toArray {n m} (A : Matrix n m) : FloatArray := A.data
 def FloatArray.toMatrix (array : FloatArray) (n m : USize) (property : array.size = n.toNat * m.toNat) : Matrix n m := ⟨array, property⟩
 
 
+/-- Random matrix with entries uniformtly sampled from [0,1] -/
+def Matrix.rand (n m : USize) : IO (Matrix n m) := do
+
+  let rand : IO Float := do
+    let N := 10000000000000
+    let n ← IO.rand 0 N
+    return n.toFloat / N.toFloat
+
+  let nm := (n*m).toNat
+  let mut buffer : FloatArray := FloatArray.mkEmpty nm
+  for i in [0:nm] do
+    buffer := buffer.push (← rand)
+
+  return ⟨buffer, sorry⟩
+
+--------------------------------------------------------------------------------
+-- Basic operations ------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+@[extern "eigenlean_matrix_matmul"]
+opaque Matrix.matmul {n m k : USize} (A : @& Matrix n m) (x : @& Matrix m k) : Matrix n k
+
+/-- Matrix vector multiplication `A*x`.
+
+Argument `out` is used for the output, it should be call linearly. -/
+@[extern "eigenlean_matrix_matmul_out"]
+opaque Matrix.matmulOut {n m k : USize} (A : @& Matrix n m) (x : @& Matrix m k) (out : Matrix n k) : Matrix n k
+
+
+
 --------------------------------------------------------------------------------
 -- Matrix Decopositions and solvers --------------------------------------------
 --------------------------------------------------------------------------------

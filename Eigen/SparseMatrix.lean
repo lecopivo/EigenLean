@@ -47,5 +47,11 @@ opaque SparseMatrix.isCompressed (A : @& SparseMatrix n m) : Bool
 @[extern "eigenlean_sparse_matrix_make_compressed"]
 opaque SparseMatrix.mkCompressed (A : @& SparseMatrix n m) : SparseMatrix n m
 
+@[extern "eigenlean_sparse_matrix_densemul"]
+opaque SparseMatrix.densemul {n m k : USize} (A : @& SparseMatrix n m) (x : @& Matrix m k) : Matrix n k
+
+@[extern "eigenlean_sparse_matrix_densemul_out"]
+opaque SparseMatrix.densemulOut {n m k : USize} (A : @& SparseMatrix n m) (x : @& Matrix m k) (out : Matrix n k) : Matrix n k
+
 
 end Eigen

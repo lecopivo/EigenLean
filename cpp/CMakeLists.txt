@@ -4,6 +4,7 @@ project(myproject)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # add_library(EigenLean STATIC DenseSolvers.cpp SparseMatrix.cpp SparseSolvers.cpp util.cpp)
 add_library(EigenLeanCpp SHARED DenseSolvers.cpp SparseMatrix.cpp SparseSolvers.cpp util.cpp)

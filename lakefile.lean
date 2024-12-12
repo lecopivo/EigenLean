@@ -34,7 +34,7 @@ script buildEigen args := do
 
   let _runCMake ← IO.Process.run {
     cmd := "cmake"
-    args := #["../../../cpp", s!"-DLEAN_SYSROOT={← Lean.findSysroot}"]
+    args := #["../../../cpp", "-DCMAKE_EXPORT_BUILD_DATABASE=1" ,s!"-DLEAN_SYSROOT={← Lean.findSysroot}"]
     cwd := defaultBuildDir / "cpp"
   }
 
