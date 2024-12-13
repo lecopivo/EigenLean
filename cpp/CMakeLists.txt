@@ -7,7 +7,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # add_library(EigenLean STATIC DenseSolvers.cpp SparseMatrix.cpp SparseSolvers.cpp util.cpp)
-add_library(EigenLeanCpp SHARED DenseSolvers.cpp SparseMatrix.cpp SparseSolvers.cpp util.cpp)
+add_library(EigenLeanCpp SHARED DenseMatrix.cpp DenseSolvers.cpp SparseMatrix.cpp SparseSolvers.cpp util.cpp)
 
 # target_include_directories(EigenLean PUBLIC ${LEAN_SYSROOT}/include/)
 target_include_directories(EigenLeanCpp PUBLIC ${LEAN_SYSROOT}/include/)

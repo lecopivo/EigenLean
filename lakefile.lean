@@ -27,6 +27,8 @@ lean_exe sparse {
 
 
 script buildEigen args := do
+
+  IO.println "build eigen"
   let _makeBuildDir ← IO.Process.run {
     cmd := "mkdir"
     args := #["-p", (defaultBuildDir / "cpp").toString]
@@ -34,10 +36,11 @@ script buildEigen args := do
 
   let _runCMake ← IO.Process.run {
     cmd := "cmake"
-    args := #["../../../cpp", "-DCMAKE_EXPORT_BUILD_DATABASE=1" ,s!"-DLEAN_SYSROOT={← Lean.findSysroot}"]
+    args := #["../../../cpp",
+              "-DCMAKE_EXPORT_BUILD_DATABASE=1",
+              s!"-DLEAN_SYSROOT={← Lean.findSysroot}"]
     cwd := defaultBuildDir / "cpp"
   }
-
   IO.println _runCMake
 
   let _runMake ← IO.Process.run {
@@ -45,29 +48,34 @@ script buildEigen args := do
     args := #[]
     cwd := defaultBuildDir / "cpp"
   }
-
   IO.println _runMake
 
   return 0
 
 
-target eigenlib pkg : FilePath := do
+def copyFile (src dest : FilePath) : IO Unit := do
+  let _cp ← IO.Process.run {
+    cmd := "cp"
+    args := #[src.toString, dest.toString]
+  }
 
-  let name := nameToSharedLib "EigenLeanCpp"
-  let path := pkg.buildDir / "cpp" / name
 
+extern_lib EigenLeanCpp pkg := do
   -- glob all source files
   let mut inputs : List (BuildJob FilePath) := []
   for file in (← (pkg.dir / "cpp").readDir) do
     unless file.path.extension = some "h" ||
-           file.path.extension = some "cpp" do continue
+           file.path.extension = some "cpp" ||
+           file.path.fileName = some "CMakeLists.txt"  do continue
     let job ← inputFile file.path true
     inputs := job :: inputs
 
+  let name := "EigenLeanCpp"
+  let path := pkg.buildDir / "cpp" / nameToSharedLib name
+  let pathSpoof := pkg.buildDir / "cpp" / nameToSharedLib (name ++ "Spoof")
 
-  inputFile path true
-
-  -- for some reasong this builds almost empty shared library
-  -- buildFileAfterDepList path inputs fun _ => do
-  --   let _ ← buildEigen []
-  --   pure ()
+  -- for some reasong this function overrides the shared library made by `make`
+  -- so we copy it to "spoof" the build system
+  buildFileAfterDepList pathSpoof inputs fun _ => do
+    let _ ← buildEigen []
+    copyFile path pathSpoof
